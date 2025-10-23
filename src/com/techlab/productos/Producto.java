@@ -46,8 +46,9 @@ public class Producto {
 		this.stock = stock;
 	}
 
-	public String mostarInfo() {
-		return String.format("%d - %s - %.2f - stock: %d", id, nombre, precio, stock);
+	@Override
+	public String toString() {
+		return String.format("%3d | %-30s | $%12.2f | %5d", id, nombre, precio, stock);
 	}
 
 	private int asignarId() {
