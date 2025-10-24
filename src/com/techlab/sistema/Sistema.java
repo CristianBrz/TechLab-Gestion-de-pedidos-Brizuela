@@ -10,13 +10,16 @@ import java.util.Scanner;
 public class Sistema {
 
 	private Map<Integer, Producto> productos;
+
 	private final Scanner scanner = new Scanner(System.in);
+	boolean mostrarMenuPrincipal = true;
 	private final String[] OPCIONES_MENU_PRINCIPAL = {
 		"Salir",
+		"Crear Stock Inicial",
 		"Agregar producto",
-		"Listar productos",
+		"Listar producto",
 		"Buscar producto",
-		"Actualizar producto",
+		"Editar producto",
 		"Eliminar producto",
 		"Crear un pedido",
 		"Listar pedidos"
@@ -27,21 +30,13 @@ public class Sistema {
 	}
 
 	public void iniciar() {
-		crearInventarioInicial();
-
-		boolean mostrarMenuPrincipal = true;
 
 		while (mostrarMenuPrincipal) {
-// TODO: Implementar limpiarPantalla()
-
+			// TODO: Implementar limpiarPantalla()
 			mostrarMenu(OPCIONES_MENU_PRINCIPAL);
-
+			System.out.print("Opcion Elegida: ");
 			int opcionElegida = Integer.parseInt(leerIngresoTeclado());
-
-			System.out.println("opcionElegida = " + opcionElegida);
-
 			ejecutarOpcion(opcionElegida);
-
 		}
 
 	}
@@ -73,18 +68,107 @@ public class Sistema {
 	}
 
 	private String leerIngresoTeclado() {
-		return scanner.nextLine();
+		return scanner.nextLine().trim();
 	}
 
 	private void ejecutarOpcion(int opcion) {
 		switch (opcion) {
-			case 1 -> agregarProducto(productos);
-			case 2 -> listarProductos(productos);
-			case 3 -> buscarProductosPorNombre(productos);
+			case 0 -> salir();
+			case 1 -> crearInventarioInicial();
+			case 2 -> agregarProducto(productos);
+			case 3 -> listarProductos(productos);
+			case 4 -> buscarProductosPorNombre(productos);
+			case 5 -> editarProducto(productos);
+			case 6 -> eliminarProducto(productos);
 
 			default -> System.out.println("Opción no válida. Intente nuevamente.");
 		}
 	}
+
+	private void salir() {
+		System.out.println("Saliendo...");
+		this.mostrarMenuPrincipal = false;
+	}
+
+	private void eliminarProducto(Map<Integer, Producto> productos) {
+		System.out.println("Elimnar producto");
+		System.out.print("Engrese el id del producto que desea eliminar: ");
+
+		int idBorrar = Integer.parseInt(leerIngresoTeclado());
+
+		Producto productoEliminado = productos.remove(idBorrar);
+
+		System.out.println("productoEliminado = " + productoEliminado);
+		esperar();
+	}
+
+
+	private void editarProducto(Map<Integer, Producto> productos) {
+		int idBuscado = solicitarIdProducto();
+		Producto producto = productos.get(idBuscado);
+
+		if (producto == null) {
+			System.out.println("No se encontró un producto con ese ID.");
+			return;
+		}
+
+		System.out.println("Producto a editar: " + producto);
+
+		int opcionElegida = mostrarMenuEdicion();
+
+		switch (opcionElegida) {
+			case 1 -> producto.setNombre(solicitarNuevoNombre());
+			case 2 -> producto.setPrecio(solicitarNuevoPrecio());
+			case 3 -> producto.setStock(solicitarNuevaCantidad());
+			case 4 -> {
+				producto.setNombre(solicitarNuevoNombre());
+				producto.setPrecio(solicitarNuevoPrecio());
+				producto.setStock(solicitarNuevaCantidad());
+			}
+			case 5 -> System.out.println("Saliendo...");
+			default -> System.out.println("Opción no válida.");
+		}
+
+		System.out.println("Producto actualizado: " + producto);
+		esperar();
+	}
+
+	private int solicitarIdProducto() {
+		System.out.print("Ingrese el ID del producto a editar: ");
+		return Integer.parseInt(leerIngresoTeclado());
+	}
+
+	private int mostrarMenuEdicion() {
+		System.out.println("Ingrese un número correspondiente a la opción que desea editar:");
+		System.out.println("1- Nombre");
+		System.out.println("2- Precio");
+		System.out.println("3- Cantidad");
+		System.out.println("4- Todo");
+		System.out.println("5- Salir");
+		return Integer.parseInt(leerIngresoTeclado());
+	}
+
+	private String solicitarNuevoNombre() {
+		System.out.print("Ingrese el nuevo nombre: ");
+		return leerIngresoTeclado();
+	}
+
+	private double solicitarNuevoPrecio() {
+		System.out.print("Ingrese el nuevo precio: ");
+		return Double.parseDouble(leerIngresoTeclado());
+	}
+
+	private int solicitarNuevaCantidad() {
+		System.out.print("Ingrese la nueva cantidad: ");
+		return Integer.parseInt(leerIngresoTeclado());
+	}
+
+
+	private void esperar() {
+		System.out.println("Presione enter para continuar...");
+		leerIngresoTeclado();
+	}
+
 
 	private void buscarProductosPorNombre(Map<Integer, Producto> productos) {
 		List<Producto> listaProductos = new ArrayList<>(productos.values());
@@ -155,6 +239,9 @@ public class Sistema {
 			productos.put(producto.getId(), producto);
 		}
 
+		System.out.println("Inventario creado:");
+		listarProductos(productos);
+
 	}
 
 	private void listarProductos(Map<Integer, Producto> productos) {
@@ -176,8 +263,7 @@ public class Sistema {
 			System.out.println(p);
 		}
 
-		System.out.println("\nPrecione cualquier tecla para continuar...");
-		leerIngresoTeclado();
+		esperar();
 	}
 
 }
