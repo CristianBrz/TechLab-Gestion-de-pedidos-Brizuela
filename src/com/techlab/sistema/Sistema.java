@@ -1,6 +1,8 @@
 package com.techlab.sistema;
 
+import com.techlab.pedidos.Pedido;
 import com.techlab.productos.Producto;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Scanner;
 public class Sistema {
 
 	private Map<Integer, Producto> productos;
+	private List<Pedido> pedidos;
 
 	private final Scanner scanner = new Scanner(System.in);
 	boolean mostrarMenuPrincipal = true;
@@ -27,6 +30,7 @@ public class Sistema {
 
 	public Sistema() {
 		this.productos = new HashMap<>();
+		this.pedidos = new ArrayList<>();
 	}
 
 	public void iniciar() {
